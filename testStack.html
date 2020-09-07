@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      Test
+    </title>
+    <style>
+
+      .green {
+        color: white;
+        background-color: green;
+      }
+
+      .red {
+        color: white;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <button onclick="test()">Test Function</button>
+    <div id="testOutput"></div>
+  </body>
+  <script>
+
+    class Stack {
+      constructor(top) {
+        if (typeof top === "undefined") {
+          this._stack = [];
+        } else {
+          this._stack = [top];
+        }
+      }
+
+      get peek() {
+        return this._stack[this._stack.length - 1];
+      }
+
+      push(item) {
+        return this._stack.push(item);
+      }
+
+      pop() {
+        return this._stack.pop();
+      }
+    }
+
+    const getRandomNumber = function(floor, ceiling) {
+      //----------------------------------------------------//
+      //Gets random number for the math problems            //
+      //where floor is the lowest number possible and       //
+      //ceiling is the highest number possible              //
+      //----------------------------------------------------//
+
+      let range = (ceiling - floor) + 1;
+      return Math.floor((Math.random() * range) + floor);
+    }
+
+    function* rndNum() {
+      let rnd = 0;
+      while (true)
+        yield getRandomNumber(1, 10);
+    }
+
+    function insertSpanText(element, text, ...classes) {
+      //----------------------------------------------------//
+      //Inserts a <span> element with text into another     //
+      //  element.                                          //
+      //string-> text: text to be inserted into the <span>  //
+      //array-> classes: classes to append to the <span>    //
+      //----------------------------------------------------//
+
+      let span = document.createElement("span");
+      span.innerHTML = text;
+      classes.forEach(x => span.classList.add(x));
+      element.appendChild(span);
+    }
+
+    function insertLineBreak(element, repeat = 1) {
+      //----------------------------------------------------//
+      //Inserts a <br /> element into another element one   //
+      //  or multiple times                                 //
+      //element-> element: the element into which the       //
+      //  <br /> isinserted                                 //
+      //integer-> repeat(optional): is the number of        //
+      //  elements to insert                                //
+      //----------------------------------------------------//
+
+      for (let i = 0; i < repeat; i++) {
+        let lineBreak = document.createElement("br");
+        element.appendChild(lineBreak);
+      }
+    }
+
+    function Assertion(message, passed) {
+      //----------------------------------------------------//
+      //Object to be thrown during my assert tests.         //
+      //string-> message: message to be passed              //
+      //boolean-> passed: indicates whether or not the test //
+      //  was passed                                        //
+      //----------------------------------------------------//
+
+      this.message = message;
+      this.passed = passed;
+    }
+
+    function assert(actual, expected, description) {
+      //----------------------------------------------------//
+      //Tests whether two values match                      //
+      //any-> actual: output provided by the function       //
+      //any-> expected: expected output of the function     //
+      //string-> description: a description of the function //
+      //----------------------------------------------------//
+
+      try {
+        //--------------------------------------------------//
+        //Evaluates whether the actual output matches the   //
+        //  expected output                                 //
+        //--------------------------------------------------//
+
+        if (actual === expected) {
+          throw new Assertion(`expected ${expected}, actual ${actual}`, true);
+        } else {
+          throw new Assertion(`expected ${expected}, actual ${actual}`, false);
+        }
+      }
+      catch(e) {
+        //--------------------------------------------------//
+        //Outputs the results on the evaluation             //
+        //--------------------------------------------------//
+
+        let testOutput = document.getElementById("testOutput");
+        insertSpanText(testOutput, description);
+        insertLineBreak(testOutput);
+        if (e.passed) {
+          insertSpanText(testOutput, e.message, "green");
+        } else {
+          insertSpanText(testOutput, e.message, "red");
+        }
+        insertLineBreak(testOutput);
+      }
+    }
+
+    function test() {
+
+      let testStack = new Stack;
+      let rnd = rndNum();
+
+      //
+      //Test push
+      let pushArray = [];
+      for (let i = 0; i < 10; i++) {
+        let a = rnd.next().value;
+        assert(testStack.push(a), i + 1, "push");
+        assert(testStack.peek, a, "peek");
+        pushArray.push(a);
+      }
+      //
+      //Test pop
+      for (let i = pushArray.length - 1; i >= 5; i--) {
+        assert(testStack.peek, pushArray[i], "peek");
+        assert(testStack.pop(), pushArray[i], "pop");
+        pushArray.pop();
+      }
+      //
+      //Test more push
+      for (let i = 5; i < 10; i++) {
+        let a = rnd.next().value;
+        assert(testStack.push(a), i + 1, "push");
+        assert(testStack.peek, a, "peek");
+        pushArray.push(a);
+      }
+
+    }
+  </script>
+</html>
